@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from datetime import datetime, date, timedelta
 from collections import UserDict
 from typing import Union
@@ -41,9 +42,32 @@ class Birthday(Field):
 
     def __str__(self):
         return self.value
-    
 
-class Record:
+
+class AbstractRecord(ABC):
+    @abstractmethod
+    def add_birthday(self, birthday: str):
+        pass
+
+    @abstractmethod
+    def add_phone(self, phone: str):
+        pass
+
+    @abstractmethod
+    def remove_phone(self, phone: str):
+        pass
+
+    @abstractmethod
+    def edit_phone(self, old_phone: str, new_phone: str):
+        pass
+
+    @abstractmethod
+    def find_phone(self, search_phone: str):
+        pass
+
+
+
+class Record(AbstractRecord):
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
@@ -87,8 +111,34 @@ class Record:
         return self.__str__()
 
 
-class AddressBook(UserDict):
-    def add_record(self, record: Record):
+class AbstractAddressBook(ABC):
+    @abstractmethod
+    def add_record(self, record: Record) -> None:
+        pass
+
+    @abstractmethod
+    def find(self, search_name: str) -> Union[Record, None]:
+        pass
+
+    @abstractmethod
+    def delete(self, delete_name: str) -> None:
+        pass
+
+    @abstractmethod
+    def _find_next_weekday(self, start_date, weekday):
+        pass
+
+    @abstractmethod
+    def _adjust_for_weekend(self, birthday):
+        pass
+
+    @abstractmethod
+    def get_upcoming_birthdays(self) -> list[dict]:
+        pass
+
+
+class AddressBook(UserDict, AbstractAddressBook):
+    def add_record(self, record: Record) -> None:
         self.data[record.name.value] = record 
 
 
